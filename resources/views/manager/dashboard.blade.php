@@ -1,0 +1,160 @@
+@extends('layouts.app')
+
+@section('title', 'ম্যানেজার ড্যাশবোর্ড')
+
+@section('content')
+<div class="min-h-screen w-full px-2 sm:px-4 lg:px-6">
+    <div class="mb-4 sm:mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">ম্যানেজার ড্যাশবোর্ড</h1>
+    </div>
+
+    <!-- Today's Summary -->
+    <div class="mb-3 sm:mb-4">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3">আজকের সারসংক্ষেপ</h2>
+    </div>
+    @if(auth()->user()->isDueSystemEnabled())
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
+            <div class="text-xs sm:text-sm opacity-90">আজকের বিক্রয়</div>
+            <div class="text-2xl sm:text-3xl font-bold">৳{{ number_format($todaySales, 2) }}</div>
+        </div>
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
+            <div class="text-xs sm:text-sm opacity-90">আজকের মোট লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold">৳{{ number_format($todayProfit, 2) }}</div>
+            <div class="text-xs opacity-75 mt-1">(সব বিক্রয় সহ)</div>
+        </div>
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
+            <div class="text-xs sm:text-sm opacity-90">আজকের নগদ লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold">৳{{ number_format($todayRealizedProfit, 2) }}</div>
+            <div class="text-xs opacity-75 mt-1">(প্রাপ্ত টাকার লাভ)</div>
+        </div>
+    </div>
+    @else
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
+            <div class="text-xs sm:text-sm opacity-90">আজকের বিক্রয়</div>
+            <div class="text-2xl sm:text-3xl font-bold">৳{{ number_format($todaySales, 2) }}</div>
+        </div>
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
+            <div class="text-xs sm:text-sm opacity-90">আজকের নগদ লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold">৳{{ number_format($todayRealizedProfit > 0 ? $todayRealizedProfit : $todayProfit, 2) }}</div>
+            <div class="text-xs opacity-75 mt-1">(প্রাপ্ত টাকার লাভ)</div>
+        </div>
+    </div>
+    @endif
+
+    <!-- This Month Summary -->
+    <div class="mb-3 sm:mb-4">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3">এই মাসের সারসংক্ষেপ</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-{{ auth()->user()->isDueSystemEnabled() ? '4' : '2' }} gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-green-500">
+            <div class="text-xs sm:text-sm text-gray-600">এই মাসের বিক্রয়</div>
+            <div class="text-2xl sm:text-3xl font-bold text-green-600">৳{{ number_format($monthSales, 2) }}</div>
+        </div>
+        @if(auth()->user()->isDueSystemEnabled())
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-blue-500">
+            <div class="text-xs sm:text-sm text-gray-600">এই মাসের মোট লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold text-blue-600">৳{{ number_format($monthProfit, 2) }}</div>
+            <div class="text-xs text-gray-500 mt-1">(সব বিক্রয় সহ)</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-emerald-500">
+            <div class="text-xs sm:text-sm text-gray-600">এই মাসের নগদ লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold text-emerald-600">৳{{ number_format($monthRealizedProfit, 2) }}</div>
+            <div class="text-xs text-gray-500 mt-1">(প্রাপ্ত টাকার লাভ)</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-orange-500">
+            <div class="text-xs sm:text-sm text-gray-600">বাকি লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold text-orange-600">৳{{ number_format($monthProfit - $monthRealizedProfit, 2) }}</div>
+            <div class="text-xs text-gray-500 mt-1">(যা এখনো আসেনি)</div>
+        </div>
+        @else
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-green-500">
+            <div class="text-xs sm:text-sm text-gray-600">এই মাসের মোট লাভ</div>
+            <div class="text-2xl sm:text-3xl font-bold text-green-600">৳{{ number_format($monthProfit, 2) }}</div>
+        </div>
+        @endif
+    </div>
+
+    <!-- Overall Summary -->
+    <div class="mb-3 sm:mb-4">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3">সাধারণ তথ্য</h2>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-{{ auth()->user()->isDueSystemEnabled() ? '4' : '2' }} gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+        <div class="bg-white rounded-lg shadow p-3 sm:p-6 border-l-4 border-indigo-500">
+            <div class="text-xs sm:text-sm text-gray-600">মোট সেলসম্যান</div>
+            <div class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalSalesmen }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-3 sm:p-6 border-l-4 border-purple-500">
+            <div class="text-xs sm:text-sm text-gray-600">মোট পণ্য</div>
+            <div class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalProducts }}</div>
+        </div>
+        @if(auth()->user()->isDueSystemEnabled())
+        <div class="bg-white rounded-lg shadow p-3 sm:p-6 border-l-4 border-red-500">
+            <div class="text-xs sm:text-sm text-gray-600">মোট বকেয়া</div>
+            <div class="text-2xl sm:text-3xl font-bold text-red-600">৳{{ number_format($totalDue, 2) }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-3 sm:p-6 border-l-4 border-yellow-500">
+            <div class="text-xs sm:text-sm text-gray-600">বকেয়া কাস্টমার</div>
+            <div class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $dueCustomers->count() }}</div>
+        </div>
+        @endif
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4">দ্রুত কাজ</h2>
+            <div class="space-y-2">
+                <a href="{{ route('manager.sales.create') }}" class="block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-center text-sm sm:text-base">
+                    নতুন বিক্রয় তৈরি করুন
+                </a>
+                <a href="{{ route('manager.salesmen.index') }}" class="block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center text-sm sm:text-base">
+                    সেলসম্যান পরিচালনা
+                </a>
+                <a href="{{ route('manager.products.index') }}" class="block bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded text-center text-sm sm:text-base">
+                    পণ্য পরিচালনা
+                </a>
+                <a href="{{ route('manager.stock.index') }}" class="block bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-center text-sm sm:text-base">
+                    স্টক যোগ করুন
+                </a>
+                @if(auth()->user()->isDueSystemEnabled())
+                <a href="{{ route('manager.due-customers') }}" class="block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center text-sm sm:text-base">
+                    বকেয়া পেমেন্ট নিন
+                </a>
+                @endif
+                <a href="{{ route('manager.reports') }}" class="block bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded text-center text-sm sm:text-base">
+                    রিপোর্ট দেখুন
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4">সাম্প্রতিক বিক্রয়</h2>
+            <div class="overflow-auto" style="max-height: 350px;">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50 sticky top-0">
+                        <tr class="border-b">
+                            <th class="text-left py-2 px-2 text-xs sm:text-sm">পণ্য</th>
+                            <th class="text-left py-2 px-2 text-xs sm:text-sm hidden sm:table-cell">সেলসম্যান</th>
+                            <th class="text-right py-2 px-2 text-xs sm:text-sm">টাকা</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($recentSales as $sale)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-2 px-2 text-xs sm:text-sm">{{ $sale->product->name }}</td>
+                            <td class="py-2 px-2 text-xs sm:text-sm hidden sm:table-cell">{{ $sale->user->name }}</td>
+                            <td class="py-2 px-2 text-xs sm:text-sm text-right font-semibold">৳{{ number_format($sale->total_amount, 2) }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="3" class="py-4 text-center text-gray-500 text-xs sm:text-sm">কোন বিক্রয় নেই</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
