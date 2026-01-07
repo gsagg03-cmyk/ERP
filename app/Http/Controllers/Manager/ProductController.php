@@ -41,7 +41,8 @@ class ProductController extends Controller
         $validated['business_id'] = $businessId;
         Product::create($validated);
 
-        return redirect()->route('manager.products.index')->with('success', 'Product created successfully.');
+        $routeName = auth()->user()->isOwner() ? 'owner.products.index' : 'manager.products.index';
+        return redirect()->route($routeName)->with('success', 'পণ্য সফলভাবে তৈরি হয়েছে।');
     }
 
     public function edit(Product $product)
@@ -79,7 +80,8 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('manager.products.index')->with('success', 'Product updated successfully.');
+        $routeName = auth()->user()->isOwner() ? 'owner.products.index' : 'manager.products.index';
+        return redirect()->route($routeName)->with('success', 'পণ্য সফলভাবে আপডেট হয়েছে।');
     }
 
     public function destroy(Product $product)
@@ -90,6 +92,7 @@ class ProductController extends Controller
         }
         
         $product->delete();
-        return redirect()->route('manager.products.index')->with('success', 'Product deleted successfully.');
+        $routeName = auth()->user()->isOwner() ? 'owner.products.index' : 'manager.products.index';
+        return redirect()->route($routeName)->with('success', 'পণ্য সফলভাবে মুছে ফেলা হয়েছে।');
     }
 }
